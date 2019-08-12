@@ -121,7 +121,7 @@ def get_deployment(doc):
 def main():
     parser = argparse.ArgumentParser(description="Operator CSV Generator")
     parser.add_argument("--manifests-dir", help="Path to kubernetes manifests")
-    parser.add_argument("--output", help="Path to kubernetes manifests")
+    parser.add_argument("--output", help="Path to write resulting Operator CSV e.g. operatorname.v0.1.0.clusterserviceversion.yaml")
     args = parser.parse_args()
     
     if args.manifests_dir:
