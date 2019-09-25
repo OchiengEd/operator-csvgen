@@ -1,5 +1,7 @@
 # operator-csvgen
-The Operator CSV Generator project aims to create an operator Cluster Service Version file from existing Kubernetes deployment manifests. The Cluster Service Version or CSV is intended to be used to add an operator to OperatorHub.io
+The Operator CSV Generator project aims to create an operator Cluster Service Version file from existing Kubernetes deployment manifests. This will mostly target operators not built with the `operator-sdk`.
+
+The Cluster Service Version or CSV is intended to be used to add an operator to OperatorHub.io
 
 ## Usage
 
