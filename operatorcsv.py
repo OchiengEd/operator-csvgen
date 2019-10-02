@@ -154,7 +154,7 @@ def get_owned_resource_types(crd, version_dir):
 
 def get_deployment(doc):
     containers = doc.get('spec', None)
-    if containers['serviceName']:
+    if containers.get('serviceName', False):
         del containers['serviceName']
     deployment = {'name': doc.get('metadata', None).get('name', None), 'spec': containers}
     deployment['spec']['replicas'] = 1
