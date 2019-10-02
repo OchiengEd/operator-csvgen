@@ -9,10 +9,24 @@ def create_operator_dir(name, version):
     for directory in [name, os.sep.join([name, version])]:
         if os.path.exists(directory) is not True:
             os.mkdir(directory)
+    create_package_file(name, version)
 
 def create_crd_file(crd, filename):
     with open(filename, 'w') as f:
         yaml.dump(crd, f, default_flow_style=False)
+
+def create_package_file(name, version):
+    csvVersion = "%s.%s" % (name, version)
+    pkg = {
+        'packageName': name,
+        'channels': [
+            {'name': 'alpha', 'currentCSV': csvVersion }
+        ]
+    }
+    package_file = "%s.package.yaml" % name
+    pkg_filename = os.path.join(name, package_file)
+    with open(pkg_filename, 'w') as f:
+        yaml.dump(pkg, f, default_flow_style=False)
 
 def get_operator_csv(manifest_path, version_dir, name, version):
     crds = []
@@ -22,25 +36,26 @@ def get_operator_csv(manifest_path, version_dir, name, version):
     version = '0.0.1' if version is None else version
     name = 'operatorname' if name is None else name
     name_version = "%s.v%s" % (name, version)
-    
+
     csv = {
-        'apiVersion': 'operators.coreos.com/v1alpha1', 
+        'apiVersion': 'operators.coreos.com/v1alpha1',
         'kind': 'ClusterServiceVersion',
         'metadata': {
             'name': name_version,
-            'namespace': 'placeholder', 
+            'namespace': 'placeholder',
             'annotations': {
                 'categories': 'categoryY',
                 'containerImage': 'quay.io/repository/image:v1.0.1',
+                'capabilities': 'Basic Install',
                 'description': '',
                 'support': 'companyX',
-                'certified': False, 
+                'certified': False,
                 'alm-examples': '',
                 'repository': '',
                 'createdAt': get_utc_time()
                 }},
         'spec': {
-            'keywords': ['word 1', 'word 2', 'word 3'], 
+            'keywords': ['word 1', 'word 2', 'word 3'],
             'version': version,
             'description': '',
             'customresourcedefinitions': {
@@ -54,7 +69,7 @@ def get_operator_csv(manifest_path, version_dir, name, version):
                 {'type': 'AllNamespaces', 'supported': True}
                 ],
             'install': {
-                'spec': 
+                'spec':
                     {
                     # 'permissions': rbac,
                     # 'deployments': deploys
@@ -65,7 +80,7 @@ def get_operator_csv(manifest_path, version_dir, name, version):
                 'maintainers': [{'email': '', 'name': ''}],
                 'provider': {'name': ''},
                 'icon': [
-                    {'base64data': '', 
+                    {'base64data': '',
                     'mediatype': ''}
                     ],
                 'minKubeVersion': '1.11.0'
@@ -106,14 +121,14 @@ def get_operator_csv(manifest_path, version_dir, name, version):
                                     csv['spec']['install']['spec']['clusterPermissions'] = get_operator_permissions(access)
                                 elif access['scope'] == 'namespace':
                                     csv['spec']['install']['spec']['permissions'] = get_operator_permissions(access)
-                            
+
                 except yaml.YAMLError as ye:
                     print(ye)
 
     # if len(csv.get('spec', None).get('install', None).get('spec', None).get('deployments', None)) == 1 and len(csv.get('spec', None).get('install', None).get('spec', None).get('deployments', None)[0].get('spec', None).get('template', None).get('spec', None).get('containers', None)) == 1:
     #     csv['metadata']['annotations']['containerImage'] = (csv.get('spec', None).get('install', None).get('spec', None).get('deployments', None)[0]
     #     .get('spec', None).get('template', None).get('spec', None).get('containers', None)[0].get('image', None))
-    
+
     return csv
 
 def get_utc_time():
@@ -133,7 +148,7 @@ def get_owned_resource_types(crd, version_dir):
     name = crd.get('metadata', None).get('name', None)
     kind = crd.get('spec', None).get('names', None).get('kind', None)
     version = crd.get('spec', None).get('version', None)
-    crd_filename = os.sep.join([version_dir, ("%s_%s.crd.yaml" % (kind, version)).lower()]) 
+    crd_filename = os.sep.join([version_dir, ("%s_%s.crd.yaml" % (kind, version)).lower()])
     create_crd_file(crd, crd_filename)
     return {'description': '', 'displayName': '', 'kind': kind, 'name': name, 'version': version}
 
