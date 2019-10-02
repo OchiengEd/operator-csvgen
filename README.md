@@ -1,5 +1,6 @@
 # operator-csvgen
-The Operator CSVGen project aims to make creating a Cluster Service Version(CSV) for operators built without using the `operator-sdk` easier.
+
+The Operator CSV Generator project aims to make creating the initial Cluster Service Version(CSV) for operators built without the `operator-sdk` easier based on the existing Kubernetes yaml files.
 
 The CSV is necessary to add an operator to OperatorHub.io
 
